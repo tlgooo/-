@@ -12,19 +12,19 @@ h1{color:#1a5490}
 .cloud.selected{border-color:gold;background:rgba(255,215,0,0.3);transform:scale(1.15)}
 #certificate{width:90%;max-width:600px;margin:30px auto;background:white;padding:40px 20px;border-radius:20px;display:none;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
 button{background:linear-gradient(gold,orange);border:none;padding:18px 40px;font-size:20px;border-radius:15px;cursor:pointer;font-weight:bold;margin:10px;display:block;width:80%;max-width:350px;margin:15px auto}
+#musicBtn{background:linear-gradient(#9b59b6,#8e44ad);color:white;font-size:16px;padding:12px}
 #payBtn{background:linear-gradient(#25D366,#128C7E);color:white}
 #downloadBtn{background:linear-gradient(#1a5490,#87CEEB);color:white;display:none}
-#musicBtn{background:linear-gradient(#9b59b6,#8e44ad);color:white;font-size:16px;padding:12px}
 input{padding:15px;font-size:20px;width:80%;max-width:300px;border-radius:10px;border:2px solid #87CEEB;text-align:center}
 </style>
 </head>
 <body>
 
-<audio id="bgMusic" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_d1718a8f9e.mp3" type="audio/mpeg">
+<audio id="bgMusic" loop preload="auto">
+  <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_d1718a8f9e.mp3" type="audio/mpeg">
 </audio>
-<audio id="dingSound">
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/24/audio_d1718a8f9e.mp3" type="audio/mpeg">
+<audio id="dingSound" preload="auto">
+  <source src="https://cdn.pixabay.com/audio/2022/03/24/audio_d1718a8f9e.mp3" type="audio/mpeg">
 </audio>
 
 <h1>☁️ امتلك سحابتك بـ 10 جنيه بس ☁️</h1>
@@ -59,9 +59,13 @@ let cloudNum = 0;
 let paid = false;
 
 function playMusic(){
-  document.getElementById('bgMusic').play();
-  document.getElementById('musicBtn').innerText = '🔊 الموسيقى شغالة';
-  document.getElementById('musicBtn').disabled = true;
+  let music = document.getElementById('bgMusic');
+  music.play().then(()=>{
+    document.getElementById('musicBtn').innerText = '🔊 الموسيقى شغالة';
+    document.getElementById('musicBtn').disabled = true;
+  }).catch(err=>{
+    alert('لو الموسيقى مشتغلتش دوس الزرار مرة كمان');
+  });
 }
 
 function selectCloud(c, el){
@@ -77,6 +81,8 @@ function pay(){
   
   cloudNum = Math.floor(Math.random()*9000)+1000;
   let msg = encodeURIComponent('السلام عليكم، حولت 10ج سحابة باسم '+customerName+' رقم السحابة #SC-'+cloudNum);
+  
+  // الرقم الجديد بتاعك اهو 01282175854
   window.open('https://wa.me/201282175854?text='+msg, '_blank');
   
   paid = true;
