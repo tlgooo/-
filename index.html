@@ -12,8 +12,10 @@ h1{color:#1a5490}
 .cloud.selected{border-color:gold;background:rgba(255,215,0,0.3);transform:scale(1.15)}
 #certificate{width:90%;max-width:600px;margin:30px auto;background:white;padding:40px 20px;border-radius:20px;display:none;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
 button{background:linear-gradient(gold,orange);border:none;padding:18px 40px;font-size:20px;border-radius:15px;cursor:pointer;font-weight:bold;margin:10px;display:block;width:80%;max-width:350px;margin:15px auto}
+#payBtn{background:linear-gradient(#25D366,#128C7E);color:white}
+#downloadBtn{background:linear-gradient(#1a5490,#87CEEB);color:white;display:none}
+#musicBtn{background:linear-gradient(#9b59b6,#8e44ad);color:white;font-size:16px;padding:12px}
 input{padding:15px;font-size:20px;width:80%;max-width:300px;border-radius:10px;border:2px solid #87CEEB;text-align:center}
-#payBtn{background:linear-gradient(#25D366,#128C7E);color:white;display:none}
 </style>
 </head>
 <body>
@@ -26,7 +28,7 @@ input{padding:15px;font-size:20px;width:80%;max-width:300px;border-radius:10px;b
 </audio>
 
 <h1>☁️ امتلك سحابتك بـ 10 جنيه بس ☁️</h1>
-<p style="font-size:18px">دوس أي مكان عشان الموسيقى تشتغل 🎵</p>
+<button id="musicBtn" onclick="playMusic()">🎵 دوس هنا عشان الموسيقى تشتغل</button>
 
 <div>
   <span class="cloud" onclick="selectCloud('☁️', this)">☁️</span>
@@ -39,24 +41,28 @@ input{padding:15px;font-size:20px;width:80%;max-width:300px;border-radius:10px;b
 <br>
 <input id="name" placeholder="اكتب اسمك هنا">
 <br>
-<button onclick="generate()">1. نزل شهادتك الأول</button>
-<button id="payBtn" onclick="pay()">2. ادفع 10ج واتساب</button>
+<button id="payBtn" onclick="pay()">1. ادفع 10ج واتساب 01282175854</button>
+<button id="downloadBtn" onclick="download()">2. نزل شهادتك بعد الدفع</button>
 
 <div id="certificate">
   <h2>☁️ شهادة ملكية سحابة افتراضية ☁️</h2>
   <div id="cloudShow" style="font-size:130px;margin:20px">☁️</div>
   <h3>هذه السحابة ملك للاستاذ/ة <span id="nameShow" style="color:#1a5490"></span></h3>
   <p style="font-size:20px">رقم السحابة: #SC-<span id="num"></span></p>
-  <p style="font-size:12px;color:gray">شهادة رمزية للترفيه فقط</p>
+  <p style="font-size:12px;color:gray">تم الشراء بتاريخ: <span id="date"></span></p>
 </div>
 
 <script>
 let selectedCloud = '☁️';
 let customerName = '';
+let cloudNum = 0;
+let paid = false;
 
-document.body.addEventListener('click', ()=>{
-  document.getElementById('bgMusic').play().catch(()=>{})
-}, {once:true});
+function playMusic(){
+  document.getElementById('bgMusic').play();
+  document.getElementById('musicBtn').innerText = '🔊 الموسيقى شغالة';
+  document.getElementById('musicBtn').disabled = true;
+}
 
 function selectCloud(c, el){
   selectedCloud = c;
@@ -64,13 +70,31 @@ function selectCloud(c, el){
   el.classList.add('selected');
 }
 
-function generate(){
+function pay(){
   customerName = document.getElementById('name').value.trim();
   if(!customerName){alert('اكتب اسمك الأول يا زعيم ☁️');return}
+  if(!document.querySelector('.cloud.selected')){alert('اختار سحابة الأول');return}
+  
+  cloudNum = Math.floor(Math.random()*9000)+1000;
+  let msg = encodeURIComponent('السلام عليكم، حولت 10ج سحابة باسم '+customerName+' رقم السحابة #SC-'+cloudNum);
+  window.open('https://wa.me/201282175854?text='+msg, '_blank');
+  
+  paid = true;
+  document.getElementById('payBtn').style.display = 'none';
+  document.getElementById('downloadBtn').style.display = 'block';
+  alert('تمام! بعد ما تبعت السكرين واتساب ارجع دوس "نزل شهادتك" 👇');
+}
+
+function download(){
+  if(!paid){
+    alert('لازم تدفع الأول يا صاحبي 😂');
+    return;
+  }
   
   document.getElementById('nameShow').innerText = customerName;
   document.getElementById('cloudShow').innerText = selectedCloud;
-  document.getElementById('num').innerText = Math.floor(Math.random()*9000)+1000;
+  document.getElementById('num').innerText = cloudNum;
+  document.getElementById('date').innerText = new Date().toLocaleDateString('ar-EG');
   document.getElementById('certificate').style.display = 'block';
   
   setTimeout(()=>{
@@ -80,16 +104,9 @@ function generate(){
       link.download = 'سحابتي-'+customerName+'.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
-      
-      document.getElementById('payBtn').style.display = 'block';
-      alert('الشهادة نزلت! دلوقتي دوس الزرار الأخضر عشان تدفع 10ج واتساب');
+      alert('مبروك يا '+customerName+'! الشهادة نزلت 🎉');
     });
   },600);
-}
-
-function pay(){
-  let msg = encodeURIComponent('السلام عليكم، حولت 10ج سحابة باسم '+customerName+' رقم السحابة #SC-'+document.getElementById('num').innerText);
-  window.open('https://wa.me/201062183539?text='+msg, '_blank');
 }
 </script>
 </body>
